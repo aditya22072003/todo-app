@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h3>TOdo list</h3>
+    <input id="tasklist">
+    <button id="btn">Add</button>
+    <div id="outDiv"></div>
+</body>
+<script>
+    let tasklist=document.querySelector("#tasklist");
+    let btn=document.querySelector("#btn");
+    let outdiv=document.querySelector("#outDiv");
+    let task=[];
+    let count=1;
+    btn.addEventListener("click",function(){
+        let obj={};
+        obj.id=count;
+        obj.title=tasklist.value;
+        obj.status='pending';
+        task.push(obj);
+        count++;
+        addToUI(obj);
+        storeLocalStorage();
+            tasklist.value='';
+        console.log(task);
+        
+
+    })
+    function addToUI(obj){
+        let title=obj.title;
+        let div=document.createElement("div");
+        let span=document.createElement("span");
+        span.innerHTML=title;
+        let chk=document.createElement("input");
+        chk.setAttribute("type","checkbox");
+        if(obj.status=='completed'){
+            chk.checked=true;
+            span.style.textDecoration="line-through";
+        }
+        chk.addEventListener("click",function(){
+            if(chk.checked==true){
+                span.style.textDecoration="line-through";
+                obj.status='completed';
+            }
+            else{
+                span.style.textDecoration="none";
+                obj.title='panding';
+            }
+            storeLocalStorage();
+
+            console.log(task);
+        })
+        let delbtn=document.createElement("button");
+        delbtn.innerHTML="Delete";
+        delbtn.addEventListener("click",function(){
+            task=task.filter(function(item){
+                if(obj.id!=item.id){
+                    return true;
+                }
+            })
+            div.remove();
+            storeLocalStorage();
+            console.log(task);
+        })
+        if(tasklist.value=='' || tasklist.value.trim()==""){
+            alert("inputbox is empty");
+        }
+        else{
+        div.appendChild(span);
+        div.appendChild(chk);
+        div.appendChild(delbtn);
+        outdiv.appendChild(div);}
+        
+
+        
+    }
+    function storeLocalStorage(){
+        localStorage.setItem("mytask",JSON.stringify(task));
+    }
+    function getLocalStorage(){
+        if(localStorage.getItem("mytask")){
+            task=JSON.parse(localStorage.getItem("mytask"));
+        }
+        task.forEach(function(item){
+            addToUI(item);
+        })
+    }
+    getLocalStorage();
+</script>
+</html>
